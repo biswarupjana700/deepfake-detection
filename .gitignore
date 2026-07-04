@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pth
+*.pt
+processed_data/
+dataset/
+dataset_small/
+test_videos/
+temp_video.mp4
+.vscode/
+.idea/
+*.zip
+.DS_Store
+*.log
+*.tmp
