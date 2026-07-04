@@ -9,3 +9,4 @@ streamlit
 pillow
 tqdm
 seaborn
+gdown
