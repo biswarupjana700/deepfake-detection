@@ -121,19 +121,17 @@ p, span, div, li { color: #c9d1d9; }
 @st.cache_resource
 def load_model():
     try:
-        # Create models directory if it doesn't exist
         os.makedirs('models', exist_ok=True)
-        
-        # Check if model file exists
         model_path = './models/best_model_improved.pth'
         if not os.path.exists(model_path):
             st.error(f"❌ Model file not found at: {model_path}")
             return None
             
         model = get_model('resnet18', num_classes=2, freeze=False)
-        checkpoint = torch.load(model_path, map_location='cpu')
         
-        # Handle different checkpoint formats
+        # 🔧 FIX: Add weights_only=False for PyTorch 2.6 compatibility
+        checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
+        
         if 'model_state_dict' in checkpoint:
             model.load_state_dict(checkpoint['model_state_dict'])
         else:
@@ -144,7 +142,6 @@ def load_model():
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
         return None
-
 model = load_model()
 
 # ============ TRANSFORMS ============
