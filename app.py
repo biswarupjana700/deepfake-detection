@@ -15,7 +15,7 @@ from model import get_model
 
 # ============ PAGE CONFIG ============
 st.set_page_config(
-    page_title="DeepShield",
+    page_title="VERITAS AI | DeepFake Sentinel",
     page_icon="🛡️",
     layout="wide"
 )
@@ -121,9 +121,24 @@ p, span, div, li { color: #c9d1d9; }
 @st.cache_resource
 def load_model():
     try:
+        # Create models directory if it doesn't exist
+        os.makedirs('models', exist_ok=True)
+        
+        # Check if model file exists
+        model_path = './models/best_model_improved.pth'
+        if not os.path.exists(model_path):
+            st.error(f"❌ Model file not found at: {model_path}")
+            return None
+            
         model = get_model('resnet18', num_classes=2, freeze=False)
-        checkpoint = torch.load('models/best_model_improved.pth', map_location='cpu')
-        model.load_state_dict(checkpoint['model_state_dict'])
+        checkpoint = torch.load(model_path, map_location='cpu')
+        
+        # Handle different checkpoint formats
+        if 'model_state_dict' in checkpoint:
+            model.load_state_dict(checkpoint['model_state_dict'])
+        else:
+            model.load_state_dict(checkpoint)
+            
         model.eval()
         return model
     except Exception as e:
