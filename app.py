@@ -8,6 +8,7 @@ import os
 import sys
 import time
 import tempfile
+import gdown
 
 # Add src to path
 sys.path.append('src')
@@ -118,57 +119,44 @@ p, span, div, li { color: #c9d1d9; }
 """, unsafe_allow_html=True)
 
 # ============ LOAD MODEL ============
-import requests
-import os
-
 def download_model():
-    """Download model from GitHub LFS if not exists"""
+    """Download model from Google Drive"""
     model_path = './models/best_model_improved.pth'
     
     # Create models directory
     os.makedirs('models', exist_ok=True)
     
-    # Check if model exists and is valid
+    # Check if model already exists
     if os.path.exists(model_path):
-        # Try to load it to check if it's valid
         try:
             torch.load(model_path, map_location='cpu', weights_only=False)
-            print("✅ Model file exists and is valid")
+            print("✅ Model already exists and is valid")
             return True
         except:
-            print("⚠️ Model file corrupted, re-downloading...")
+            print("⚠️ Existing model is corrupted, re-downloading...")
             os.remove(model_path)
     
-    # Download from GitHub LFS
+    # 🔑 Your Google Drive File ID
+    file_id = "1DnkE1hMOS00iRCWtQjkkIiUOE_pMSP8B"
+    
     try:
-        print("📥 Downloading model from GitHub...")
-        # Direct raw URL from GitHub (replace with your actual file URL)
-        url = "https://raw.githubusercontent.com/biswarupjana700/deepfake-detection/main/models/best_model_improved.pth"
-        
-        response = requests.get(url, stream=True)
-        if response.status_code == 200:
-            with open(model_path, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-            print("✅ Model downloaded successfully!")
-            return True
-        else:
-            st.error(f"❌ Failed to download model: HTTP {response.status_code}")
-            return False
+        print("📥 Downloading model from Google Drive...")
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, model_path, quiet=False)
+        print("✅ Model downloaded successfully!")
+        return True
     except Exception as e:
-        st.error(f"❌ Error downloading model: {e}")
+        print(f"❌ Error downloading model: {e}")
         return False
 
 @st.cache_resource
 def load_model():
     try:
-        # Ensure model is downloaded
         if not download_model():
+            st.error("❌ Failed to download model")
             return None
             
         model = get_model('resnet18', num_classes=2, freeze=False)
-        
-        # Load the model
         model_path = './models/best_model_improved.pth'
         checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
         
@@ -182,6 +170,7 @@ def load_model():
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
         return None
+
 model = load_model()
 
 # ============ TRANSFORMS ============
