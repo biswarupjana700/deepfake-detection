@@ -8,6 +8,18 @@
 
 
 
+*## 🎯 Live Demo*
+
+
+
+*\*\*Try it yourself:\*\* \[VERITAS AI - DeepFake Detector](https://deepfake-detection-hsvv6jgmuqftugclzxk3xn.streamlit.app)*
+
+
+
+*Upload an image or video and see if it's REAL or FAKE!*
+
+
+
 *## 🎯 Problem Statement*
 
 *Deepfakes are manipulated videos that can spread misinformation. This project aims to automatically detect deepfake videos using AI.*
